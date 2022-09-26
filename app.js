@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const maintenanceRoutes = require('./routes/maintenance');
 const carRoutes = require('./routes/car');
+const userRoutes = require('./routes/user');
 const cors = require('cors')
 
 const app = express();
@@ -12,8 +13,10 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
+//routes
 app.use('/maintenance', maintenanceRoutes);
 app.use('/cars', carRoutes);
+app.use('/users', userRoutes);
 
 app.use((err, req, res, next) => {
     console.log(err);
@@ -27,6 +30,7 @@ app.use((err, req, res, next) => {
     
 });
 
+//DB
 mongoose.connect(process.env.MONGO_URL)
     .then(result => {
         console.log('connected');
