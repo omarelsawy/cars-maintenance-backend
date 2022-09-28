@@ -16,3 +16,11 @@ exports.create = async (req, res, next) => {
     res.status(201).json({'status': 'success', 'data': {'id': createdCar.id}})
 
 }
+
+exports.all = async (req, res, next) => {
+    
+    let cars = await Car.find().select('_id name');
+
+    res.status(200).json({'status': 'success', 'data': {'cars': cars}})
+
+}
