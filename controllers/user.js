@@ -16,7 +16,7 @@ exports.getToken = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let user = await User.findOne({'email': email})
+    let user = await User.findOne({'email': email, 'type': 'admin'})
 
     if(!user){
         const error = new Error('user not found')
