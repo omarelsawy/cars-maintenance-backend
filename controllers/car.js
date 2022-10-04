@@ -1,4 +1,5 @@
-const Car = require("../models/car")
+const Car = require("../models/car");
+const Maintenance = require("../models/maintenance");
 
 exports.create = async (req, res, next) => {
 
@@ -27,5 +28,22 @@ exports.all = async (req, res, next) => {
     let cars = await Car.find().select('_id name');
 
     res.status(200).json({'status': 'success', 'data': {'cars': cars}})
+
+}
+
+exports.show = async (req, res, next) => {
+
+    const id = req.params.id
+
+    const car = await Car.findOne({'_id': id})
+        .select('_id name').lean();
+
+    const maintenance = await Maintenance.find({car: car._id})
+        .select('_id createdAt description price');    
+
+    car.maintenance = maintenance;
+    console.log(car)
+
+    res.status(200).json({'status': 'success', 'data': {'car': car}})
 
 }
