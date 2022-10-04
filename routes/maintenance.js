@@ -5,6 +5,7 @@ const isAuth = require ('../middleware/is-auth');
 const router = express.Router();
 
 router.get('/', isAuth, maintenanceController.all);
+router.get('/:id', isAuth, maintenanceController.show);
 router.post('/', isAuth, maintenanceController.create);
 
 module.exports = router;

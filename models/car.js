@@ -7,6 +7,21 @@ const schema = new Schema({
             type: String,
             required: true
         },
+        type: {
+            type: String
+        },
+        subType: {
+            type: String
+        },
+        color: {
+            type: String
+        },
+        model: {
+            type: String
+        },
+        numberPlate: {
+            type: String
+        }
     },
     {timestamps: true} 
 );

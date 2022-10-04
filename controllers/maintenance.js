@@ -18,6 +18,19 @@ exports.all = async (req, res, next) => {
 
 }
 
+exports.show = async (req, res, next) => {
+
+    const id = req.params.id
+
+    const maintenanceRes = await Maintenance.findOne({'_id': id})
+        .populate('car', 'name')
+        .populate('creator', 'name')
+        .select('_id createdAt description price');
+
+    res.status(200).json({'status': 'success', 'data': {'singleMaintenance': maintenanceRes}})
+
+}
+
 exports.create = async (req, res, next) => {
 
     const createdMaintenance = new Maintenance();

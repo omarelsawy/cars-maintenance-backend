@@ -4,6 +4,11 @@ exports.create = async (req, res, next) => {
 
     const createdCar = new Car();
     createdCar.name = req.body.name
+    createdCar.type = req.body.type
+    createdCar.subType = req.body.subType
+    createdCar.color = req.body.color
+    createdCar.model = req.body.model
+    createdCar.numberPlate = req.body.numberPlate
 
     try{
         await createdCar.save();
