@@ -36,13 +36,29 @@ exports.show = async (req, res, next) => {
     const id = req.params.id
 
     const car = await Car.findOne({'_id': id})
-        .select('_id name').lean();
+        .select('_id name type subType color model numberPlate').lean();
 
-    const maintenance = await Maintenance.find({car: car._id})
+    let filter = {car: car._id}
+
+    if(req.query.dateFrom){
+        filter.createdAt = { $gte: new Date(req.query.dateFrom),
+            //$lte: '1987-10-26' 
+        }
+    }
+
+    if(req.query.dateTo){
+        const date = new Date(req.query.dateTo);
+        date.setDate(date.getDate() + 1);
+
+        filter.createdAt = { ...filter.createdAt, 
+            $lte: date
+        }
+    }
+
+    const maintenance = await Maintenance.find(filter)
         .select('_id createdAt description price');    
 
     car.maintenance = maintenance;
-    console.log(car)
 
     res.status(200).json({'status': 'success', 'data': {'car': car}})
 
