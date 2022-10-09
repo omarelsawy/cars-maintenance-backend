@@ -27,7 +27,20 @@ exports.all = async (req, res, next) => {
     
     let cars = await Car.find().select('_id name');
 
-    res.status(200).json({'status': 'success', 'data': {'cars': cars}})
+    let carsResPromise = cars.map(async (car) => {
+
+        let maintenanceCount = await Maintenance.find({car: car._id}).count();
+
+        return {
+            '_id': car._id,
+            'name': car.name,
+            'maintenanceCount': maintenanceCount,
+        }
+    })
+
+    const carsRes = await Promise.all(carsResPromise)
+
+    res.status(200).json({'status': 'success', 'data': {'cars': carsRes}})
 
 }
 
