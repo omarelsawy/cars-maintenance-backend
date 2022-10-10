@@ -25,7 +25,7 @@ exports.show = async (req, res, next) => {
     const maintenanceRes = await Maintenance.findOne({'_id': id})
         .populate('car', 'name')
         .populate('creator', 'name')
-        .select('_id createdAt description price');
+        .select('_id createdAt description price image');
 
     res.status(200).json({'status': 'success', 'data': {'singleMaintenance': maintenanceRes}})
 
@@ -38,6 +38,7 @@ exports.create = async (req, res, next) => {
     createdMaintenance.description = req.body.description
     createdMaintenance.price = req.body.price
     createdMaintenance.creator = req.userId
+    createdMaintenance.image = req.file ? req.file.path : undefined;
 
     try{
         await createdMaintenance.save();
