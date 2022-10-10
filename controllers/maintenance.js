@@ -3,18 +3,24 @@ const Maintenance = require("../models/maintenance")
 exports.all = async (req, res, next) => {
 
     const filter = {};
+    const perPage = req.query.perPage ? req.query.perPage : 10
+    const page = req.query.page ? req.query.page : 1
 
     //filter
     if(req.query.carId){
         filter.car = req.query.carId
     }
 
+    const count = await Maintenance.find(filter).count()
+
     const maintenanceRes = await Maintenance.find(filter)
         .populate('car', 'name')
         .populate('creator', 'name')
+        .limit(perPage)
+        .skip((page-1)*perPage)
         .select('_id createdAt description price');
 
-    res.status(200).json({'status': 'success', 'data': {'maintenance': maintenanceRes}})
+    res.status(200).json({'status': 'success', 'data': {'maintenance': maintenanceRes, 'count': count}})
 
 }
 
