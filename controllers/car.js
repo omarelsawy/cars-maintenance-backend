@@ -3,6 +3,8 @@ const Maintenance = require("../models/maintenance");
 
 exports.create = async (req, res, next) => {
 
+    const company = req.company;
+
     const createdCar = new Car();
     createdCar.name = req.body.name
     createdCar.type = req.body.type
@@ -10,6 +12,7 @@ exports.create = async (req, res, next) => {
     createdCar.color = req.body.color
     createdCar.model = req.body.model
     createdCar.numberPlate = req.body.numberPlate
+    createdCar.company = company._id
 
     try{
         await createdCar.save();
@@ -19,13 +22,15 @@ exports.create = async (req, res, next) => {
         return res.status(500).json({'status': 'failed', 'messages': err.errors})
     }
 
-    res.status(201).json({'status': 'success', 'data': {'id': createdCar.id}})
+    res.status(201).json({'status': 'success', 'data': {'_id': createdCar._id}})
 
 }
 
 exports.all = async (req, res, next) => {
     
-    let cars = await Car.find().select('_id name');
+    const company = req.company;
+
+    let cars = await Car.find({'company': company._id}).select('_id name');
 
     let carsResPromise = cars.map(async (car) => {
 
@@ -46,10 +51,16 @@ exports.all = async (req, res, next) => {
 
 exports.show = async (req, res, next) => {
 
+    const company = req.company;
+
     const id = req.params.id
 
-    const car = await Car.findOne({'_id': id})
+    const car = await Car.findOne({'_id': id, 'company': company._id})
         .select('_id name type subType color model numberPlate').lean();
+
+    if(!car){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
+    }
 
     let filter = {car: car._id}
 

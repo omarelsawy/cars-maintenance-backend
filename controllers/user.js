@@ -2,12 +2,12 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Company = require('../models/company');
 
 exports.getToken = async (req, res, next) => {
 
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        console.log('sdfdsf')
         const error = new Error('validation error');
         error.statusCode = 422;
         return next(error);
@@ -16,7 +16,7 @@ exports.getToken = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let user = await User.findOne({'email': email, 'type': 'admin'})
+    let user = await User.findOne({'email': email, 'type': 'admin'}).populate('company', 'name slug')
 
     if(!user){
         const error = new Error('user not found')
@@ -36,6 +36,6 @@ exports.getToken = async (req, res, next) => {
         id: user._id.toString()
     }, process.env.JWT_SECRET, { expiresIn: '24h' })
 
-    res.json({'status': 'success', 'data': {'token': token}})
+    res.json({'status': 'success', 'data': {'token': token, 'company': user.company}})
 
 }

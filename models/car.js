@@ -7,6 +7,11 @@ const schema = new Schema({
             type: String,
             required: true
         },
+        company: {
+            type: Schema.Types.ObjectId,
+            ref: 'Company',
+            required: true
+        },
         type: {
             type: String
         },

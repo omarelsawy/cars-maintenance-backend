@@ -8,6 +8,11 @@ const schema = new Schema({
             ref: 'Car',
             required: true
         },
+        company: {
+            type: Schema.Types.ObjectId,
+            ref: 'Company',
+            required: true
+        },
         description: {
             type: Schema.Types.String
         },

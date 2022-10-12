@@ -18,7 +18,12 @@ const schema = new Schema({
     type: {
         type: String,
         required: true
-    }
+    },
+    company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
+    },
 })
 
 module.exports = mongoose.model('User', schema)

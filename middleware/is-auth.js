@@ -18,6 +18,6 @@ module.exports = (req, res, next) => {
         }
     }
 
-    res.status(401).json({'status': 'failed', 'data': {'error': 'not authenticated'}})
+    return res.status(401).json({'status': 'failed', 'data': {'error': 'not authenticated'}})
 
 }

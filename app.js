@@ -2,12 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
-const maintenanceRoutes = require('./routes/maintenance');
-const carRoutes = require('./routes/car');
-const userRoutes = require('./routes/user');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
+const companyRoutes = require('./routes/company')
+const userController = require('./controllers/user');
+const { body } = require('express-validator/check');
+const isAuth = require ('./middleware/is-auth');
+const validateCompany = require('./middleware/validateCompany');
 
 const app = express();
 
@@ -42,9 +44,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //routes
-app.use('/maintenance', maintenanceRoutes);
-app.use('/cars', carRoutes);
-app.use('/users', userRoutes);
+app.post('/users/get-token',
+    [
+        body('email')
+            .isEmail(),
+        body('password')
+            .notEmpty()
+    ], 
+    userController.getToken
+);
+
+app.use('/company/:slug', [isAuth, validateCompany], companyRoutes);
+
 
 app.use((err, req, res, next) => {
     console.log(err);

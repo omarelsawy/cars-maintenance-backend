@@ -1,8 +1,11 @@
-const Maintenance = require("../models/maintenance")
+const Maintenance = require("../models/maintenance");
+const Car = require("../models/car");
 
 exports.all = async (req, res, next) => {
+    
+    const company = req.company;
 
-    const filter = {};
+    const filter = {'company': company._id};
     const perPage = req.query.perPage ? req.query.perPage : 10
     const page = req.query.page ? req.query.page : 1
 
@@ -26,12 +29,18 @@ exports.all = async (req, res, next) => {
 
 exports.show = async (req, res, next) => {
 
+    const company = req.company;
+
     const id = req.params.id
 
-    const maintenanceRes = await Maintenance.findOne({'_id': id})
+    const maintenanceRes = await Maintenance.findOne({'_id': id, 'company': company._id})
         .populate('car', 'name')
         .populate('creator', 'name')
         .select('_id createdAt description price image');
+
+    if(!maintenanceRes){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
+    }
 
     res.status(200).json({'status': 'success', 'data': {'singleMaintenance': maintenanceRes}})
 
@@ -39,11 +48,19 @@ exports.show = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
 
+    const company = req.company;
+
+    const car = await Car.findOne({'_id': req.body.carId}).populate('company', '_id')
+    if(car?.company._id.toString() !== company._id.toString()){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'car not belong'}});    
+    }
+
     const createdMaintenance = new Maintenance();
     createdMaintenance.car = req.body.carId
     createdMaintenance.description = req.body.description
     createdMaintenance.price = req.body.price
     createdMaintenance.creator = req.userId
+    createdMaintenance.company = company._id
     createdMaintenance.image = req.file ? req.file.path : undefined;
 
     try{
@@ -54,6 +71,6 @@ exports.create = async (req, res, next) => {
         return res.status(500).json({'status': 'failed', 'messages': err.errors})
     }
 
-    res.status(201).json({'status': 'success', 'data': {'id': createdMaintenance.id}})
+    res.status(201).json({'status': 'success', 'data': {'_id': createdMaintenance._id}})
 
 }

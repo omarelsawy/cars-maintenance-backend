@@ -1,11 +1,10 @@
 const express = require('express');
 const maintenanceController = require('../controllers/maintenance');
-const isAuth = require ('../middleware/is-auth');
 
 const router = express.Router();
 
-router.get('/', isAuth, maintenanceController.all);
-router.get('/:id', isAuth, maintenanceController.show);
-router.post('/', isAuth, maintenanceController.create);
+router.get('/', maintenanceController.all);
+router.get('/:id', maintenanceController.show);
+router.post('/', maintenanceController.create);
 
 module.exports = router;
