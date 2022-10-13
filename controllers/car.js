@@ -30,6 +30,8 @@ exports.all = async (req, res, next) => {
     
     const company = req.company;
 
+    let carsCount = await Car.find({'company': company._id}).count();
+
     let cars = await Car.find({'company': company._id}).select('_id name');
 
     let carsResPromise = cars.map(async (car) => {
@@ -45,7 +47,7 @@ exports.all = async (req, res, next) => {
 
     const carsRes = await Promise.all(carsResPromise)
 
-    res.status(200).json({'status': 'success', 'data': {'cars': carsRes}})
+    res.status(200).json({'status': 'success', 'data': {'cars': carsRes, 'count': carsCount}})
 
 }
 
@@ -79,11 +81,13 @@ exports.show = async (req, res, next) => {
         }
     }
 
+    const maintenanceCount = await Maintenance.find(filter).count();
+
     const maintenance = await Maintenance.find(filter)
         .select('_id createdAt description price');    
 
     car.maintenance = maintenance;
 
-    res.status(200).json({'status': 'success', 'data': {'car': car}})
+    res.status(200).json({'status': 'success', 'data': {'car': car, 'maintenanceCount': maintenanceCount}})
 
 }
