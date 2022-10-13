@@ -64,6 +64,9 @@ exports.show = async (req, res, next) => {
         return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
     }
 
+    const perPage = req.query.perPage ? req.query.perPage : 10
+    const page = req.query.page ? req.query.page : 1
+
     let filter = {car: car._id}
 
     if(req.query.dateFrom){
@@ -84,6 +87,8 @@ exports.show = async (req, res, next) => {
     const maintenanceCount = await Maintenance.find(filter).count();
 
     const maintenance = await Maintenance.find(filter)
+        .limit(perPage)
+        .skip((page-1)*perPage)
         .select('_id createdAt description price');    
 
     car.maintenance = maintenance;
