@@ -70,7 +70,7 @@ app.use((err, req, res, next) => {
 });
 
 //DB
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL_Live)
     .then(result => {
         console.log('connected');
         app.listen(process.env.PORT || 3002);

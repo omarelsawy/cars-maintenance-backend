@@ -68,7 +68,7 @@ exports.create = async (req, res, next) => {
     }
     catch(err){
         console.log(err)
-        return res.status(500).json({'status': 'failed', 'messages': err.errors})
+        return res.status(500).json({'status': 'failed', 'data':{'error': err.errors}})
     }
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdMaintenance._id}})
