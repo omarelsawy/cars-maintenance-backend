@@ -15,7 +15,7 @@ const app = express();
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'images')
+        cb(null, 'public/images')
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + '-' + file.originalname)
@@ -37,7 +37,7 @@ app.use(multer({
 }).single('image')
 )
 
-app.use('/images', express.static(path.join(__dirname, 'images')))
+app.use('/public/images', express.static(path.join(__dirname, 'public/images')))
 
 app.use(cors());
 
