@@ -1,5 +1,5 @@
 const Order = require("../models/order")
-const Car = require("../models/car")
+const Car = require("../models/car");
 
 exports.all = async (req, res, next) => {
     
@@ -49,7 +49,7 @@ exports.all = async (req, res, next) => {
 
     const count = await Order.find(filter).count()
 
-    const ordersRes = await Order.find(filter)
+    const ordersRes = await Order.find(filter).sort({createdAt: -1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)
@@ -97,4 +97,23 @@ exports.create = async (req, res, next) => {
     }
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdOrder._id}})
+}
+
+exports.show = async (req, res, next) => {
+
+    const company = req.company;
+
+    const id = req.params.id
+
+    const order = await Order.findOne({'_id': id, 'company': company._id})
+        .populate('car', 'name')
+        .populate('creator', 'name')
+        .select('_id description start end address contact');
+
+    if(!order){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
+    }
+
+    res.status(200).json({'status': 'success', 'data': {'order': order}})
+
 }

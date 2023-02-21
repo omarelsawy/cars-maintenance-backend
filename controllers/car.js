@@ -32,7 +32,7 @@ exports.all = async (req, res, next) => {
 
     let carsCount = await Car.find({'company': company._id}).count();
 
-    let cars = await Car.find({'company': company._id}).select('_id name');
+    let cars = await Car.find({'company': company._id}).sort({createdAt: -1}).select('_id name');
 
     let carsResPromise = cars.map(async (car) => {
 

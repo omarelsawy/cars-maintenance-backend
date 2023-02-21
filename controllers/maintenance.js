@@ -16,7 +16,7 @@ exports.all = async (req, res, next) => {
 
     const count = await Maintenance.find(filter).count()
 
-    const maintenanceRes = await Maintenance.find(filter)
+    const maintenanceRes = await Maintenance.find(filter).sort({createdAt: -1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)

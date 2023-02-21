@@ -3,6 +3,7 @@ const maintenanceRoutes = require('./maintenance');
 const carRoutes = require('./car');
 const userRoutes = require('./user');
 const orderRoutes = require('./order');
+const reminderRoutes = require('./reminder');
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ router.use('/maintenance', maintenanceRoutes);
 router.use('/cars', carRoutes);
 router.use('/users', userRoutes);
 router.use('/orders', orderRoutes);
+router.use('/reminders', reminderRoutes);
 
 module.exports = router;

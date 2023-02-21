@@ -34,7 +34,7 @@ exports.getToken = async (req, res, next) => {
 
     const token = jwt.sign({
         id: user._id.toString()
-    }, process.env.JWT_SECRET, { expiresIn: '24h' })
+    }, process.env.JWT_SECRET, { /* expiresIn: '24h' */ })
 
     res.json({'status': 'success', 'data': {'token': token, 'company': user.company}})
 
