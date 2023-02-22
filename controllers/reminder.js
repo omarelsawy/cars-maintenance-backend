@@ -17,7 +17,6 @@ exports.all = async (req, res, next) => {
 
     //dates
     let startDate = new Date();
-    startDate.setDate(startDate.getDate() - 1);
 
     if(req.query.reminderDate && 
         moment(req.query.reminderDate).format('YYYY-MM-DD') > moment(startDate).format('YYYY-MM-DD')
