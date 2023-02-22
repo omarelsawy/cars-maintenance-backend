@@ -16,12 +16,15 @@ exports.all = async (req, res, next) => {
     }
 
     //dates
-    let startDate = new Date();
+    let startDate = new Date().setUTCHours(0,0,0,0);
+    if(req.query.notification === 'true'){
+        startDate = new Date();
+    }
 
     if(req.query.reminderDate && 
         moment(req.query.reminderDate).format('YYYY-MM-DD') > moment(startDate).format('YYYY-MM-DD')
     ){
-        startDate = req.query.reminderDate
+        startDate = new Date(req.query.reminderDate)
     }
 
     filter.reminderDate = { $gte: startDate }
