@@ -75,7 +75,7 @@ exports.create = async (req, res, next) => {
     createdReminder.creator = req.userId
     createdReminder.car = car?._id
     createdReminder.description = req.body.description
-    createdReminder.reminderDate = new Date(req.body.reminderDate)
+    createdReminder.reminderDate = new Date(req.body.reminderDate).toLocaleString('en-US', { timeZone: 'Africa/Cairo' })
 
     try{
         await createdReminder.save()
