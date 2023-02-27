@@ -29,10 +29,16 @@ exports.create = async (req, res, next) => {
 exports.all = async (req, res, next) => {
     
     const company = req.company;
+    const perPage = req.query.perPage ? req.query.perPage : 10
+    const page = req.query.page ? req.query.page : 1
 
     let carsCount = await Car.find({'company': company._id}).count();
 
-    let cars = await Car.find({'company': company._id}).sort({createdAt: -1}).select('_id name');
+    let cars = await Car.find({'company': company._id})
+        .limit(perPage)
+        .skip((page-1)*perPage)
+        .sort({createdAt: -1})
+        .select('_id name');
 
     let carsResPromise = cars.map(async (car) => {
 
