@@ -36,6 +36,11 @@ exports.getToken = async (req, res, next) => {
         id: user._id.toString()
     }, process.env.JWT_SECRET, { /* expiresIn: '24h' */ })
 
+    if(req.body.webPushToken){
+        user.webPushToken = JSON.parse(req.body.webPushToken)
+        await user.save()
+    }
+
     res.json({'status': 'success', 'data': {'token': token, 'company': user.company}})
 
 }

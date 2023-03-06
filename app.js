@@ -10,6 +10,13 @@ const userController = require('./controllers/user');
 const { body } = require('express-validator/check');
 const isAuth = require ('./middleware/is-auth');
 const validateCompany = require('./middleware/validateCompany');
+const webPush = require('web-push')
+
+webPush.setVapidDetails(
+    "https://example.com",
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+);
 
 const app = express();
 

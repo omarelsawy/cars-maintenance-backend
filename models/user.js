@@ -24,6 +24,9 @@ const schema = new Schema({
         ref: 'Company',
         required: true
     },
+    webPushToken: {
+        type: Object,
+    },
 })
 
 module.exports = mongoose.model('User', schema)

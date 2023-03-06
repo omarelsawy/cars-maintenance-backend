@@ -1,6 +1,8 @@
 const Car = require("../models/car");
 const Reminder = require("../models/Reminder");
 const moment = require('moment');
+const { scheduleNotification } = require("../services");
+const User = require("../models/user");
 
 exports.all = async (req, res, next) => {
     
@@ -84,6 +86,13 @@ exports.create = async (req, res, next) => {
         console.log(err)
         return res.status(500).json({'status': 'failed', 'data':{'error': err.errors}})
     }
+
+    let users = await User.find({'company': company._id}).select('webPushToken');
+    let subscriptions = users.map(user => user.webPushToken)
+    let paylaod = JSON.stringify({ 
+        title: createdReminder.description
+    })
+    scheduleNotification(createdReminder.reminderDate, paylaod, subscriptions)
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdReminder._id}})
 }
