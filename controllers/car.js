@@ -29,7 +29,7 @@ exports.create = async (req, res, next) => {
 exports.all = async (req, res, next) => {
     
     const company = req.company;
-    const perPage = req.query.perPage ? req.query.perPage : 10
+    const perPage = req.query.perPage ? req.query.perPage : 50
     const page = req.query.page ? req.query.page : 1
 
     let carsCount = await Car.find({'company': company._id}).count();
@@ -76,7 +76,7 @@ exports.show = async (req, res, next) => {
     let filter = {car: car._id}
 
     if(req.query.dateFrom){
-        filter.createdAt = { $gte: new Date(req.query.dateFrom),
+        filter.maintenanceDate = { $gte: new Date(req.query.dateFrom),
             //$lte: '1987-10-26' 
         }
     }
@@ -85,7 +85,7 @@ exports.show = async (req, res, next) => {
         const date = new Date(req.query.dateTo);
         date.setDate(date.getDate() + 1);
 
-        filter.createdAt = { ...filter.createdAt, 
+        filter.maintenanceDate = { ...filter.maintenanceDate, 
             $lte: date
         }
     }
@@ -95,7 +95,7 @@ exports.show = async (req, res, next) => {
     const maintenance = await Maintenance.find(filter)
         .limit(perPage)
         .skip((page-1)*perPage)
-        .select('_id createdAt description price');    
+        .select('_id maintenanceDate description price');    
 
     car.maintenance = maintenance;
 

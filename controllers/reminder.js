@@ -42,7 +42,7 @@ exports.all = async (req, res, next) => {
 
     const count = await Reminder.find(filter).count()
 
-    const remindersRes = await Reminder.find(filter).sort({reminderDate: -1})
+    const remindersRes = await Reminder.find(filter).sort({reminderDate: 1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)

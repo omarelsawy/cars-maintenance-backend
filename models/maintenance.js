@@ -14,7 +14,12 @@ const schema = new Schema({
             required: true
         },
         description: {
-            type: Schema.Types.String
+            type: Schema.Types.String,
+            required: true
+        },
+        maintenanceDate: {
+            type: Date,
+            required: true
         },
         price: {
             type: Schema.Types.Number

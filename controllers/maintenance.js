@@ -16,12 +16,12 @@ exports.all = async (req, res, next) => {
 
     const count = await Maintenance.find(filter).count()
 
-    const maintenanceRes = await Maintenance.find(filter).sort({createdAt: -1})
+    const maintenanceRes = await Maintenance.find(filter).sort({maintenanceDate: -1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)
         .skip((page-1)*perPage)
-        .select('_id createdAt description price');
+        .select('_id maintenanceDate description price');
 
     res.status(200).json({'status': 'success', 'data': {'maintenance': maintenanceRes, 'count': count}})
 
@@ -36,7 +36,7 @@ exports.show = async (req, res, next) => {
     const maintenanceRes = await Maintenance.findOne({'_id': id, 'company': company._id})
         .populate('car', 'name')
         .populate('creator', 'name')
-        .select('_id createdAt description price image');
+        .select('_id maintenanceDate description price image');
 
     if(!maintenanceRes){
         return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
@@ -61,6 +61,7 @@ exports.create = async (req, res, next) => {
     createdMaintenance.price = req.body.price
     createdMaintenance.creator = req.userId
     createdMaintenance.company = company._id
+    createdMaintenance.maintenanceDate = req.body.maintenanceDate
     createdMaintenance.image = req.file ? req.file.path : undefined;
 
     try{
