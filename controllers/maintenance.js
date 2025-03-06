@@ -58,7 +58,7 @@ exports.create = async (req, res, next) => {
     const createdMaintenance = new Maintenance();
     createdMaintenance.car = req.body.carId
     createdMaintenance.description = req.body.description
-    createdMaintenance.price = req.body.price
+    createdMaintenance.price = req.body.price ? parseInt(convertArabicToWesternNumber(req.body.price)) : ''
     createdMaintenance.creator = req.userId
     createdMaintenance.company = company._id
     createdMaintenance.maintenanceDate = req.body.maintenanceDate
@@ -75,3 +75,16 @@ exports.create = async (req, res, next) => {
     res.status(201).json({'status': 'success', 'data': {'_id': createdMaintenance._id}})
 
 }
+
+const convertArabicToWesternNumber = (arabicNum) => {
+    const arabicDigits = "٠١٢٣٤٥٦٧٨٩"; // Arabic numerals (0-9)
+    const westernDigits = "0123456789"; // Western numerals (0-9)
+  
+    return arabicNum
+      .split("")
+      .map(char => {
+        let index = arabicDigits.indexOf(char);
+        return index !== -1 ? westernDigits[index] : char;
+      })
+      .join("");
+  }
