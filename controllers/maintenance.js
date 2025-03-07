@@ -14,6 +14,21 @@ exports.all = async (req, res, next) => {
         filter.car = req.query.carId
     }
 
+    if(req.query.dateFrom){
+        filter.maintenanceDate = { $gte: new Date(req.query.dateFrom),
+            //$lte: '1987-10-26' 
+        }
+    }
+
+    if(req.query.dateTo){
+        const date = new Date(req.query.dateTo);
+        date.setDate(date.getDate() + 1);
+
+        filter.maintenanceDate = { ...filter.maintenanceDate, 
+            $lte: date
+        }
+    }
+
     const count = await Maintenance.find(filter).count()
 
     const maintenanceRes = await Maintenance.find(filter).sort({maintenanceDate: -1})
