@@ -103,7 +103,7 @@ exports.create = async (req, res, next) => {
         return res.status(500).json({'status': 'failed', 'data':{'error': err.errors}})
     }
     
-    let users = await User.find({'company': company._id, 'employee': employee._id}).select('webPushToken');
+    let users = await User.find({'company': company._id, '_id': employee._id}).select('webPushToken');
     let subscriptions = users.map(user => user.webPushToken)
     let paylaod = JSON.stringify({ 
         title: createdOrder.description
