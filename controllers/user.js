@@ -16,7 +16,7 @@ exports.getToken = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let user = await User.findOne({'email': email, 'type': 'admin'}).populate('company', 'name slug')
+    let user = await User.findOne({'email': email}).populate('company', 'name slug')
 
     if(!user){
         const error = new Error('user not found')
@@ -41,6 +41,6 @@ exports.getToken = async (req, res, next) => {
         await user.save()
     }
 
-    res.json({'status': 'success', 'data': {'token': token, 'company': user.company}})
+    res.json({'status': 'success', 'data': {'token': token, 'type': user.type, 'company': user.company}})
 
 }

@@ -1,5 +1,7 @@
 const Order = require("../models/order")
 const Car = require("../models/car");
+const User = require("../models/user");
+const { scheduleNotification } = require("../services");
 
 exports.all = async (req, res, next) => {
     
@@ -70,6 +72,10 @@ exports.create = async (req, res, next) => {
         if(car?.company._id.toString() !== company._id.toString()){
             return res.status(422).json({'status': 'failed', 'data': {'error': 'car not belong'}});    
         }
+        employee = await User.findOne({'_id': req.body.employeeId}).populate('company', '_id')
+        if(employee?.company._id.toString() !== company._id.toString()){
+            return res.status(422).json({'status': 'failed', 'data': {'error': 'employee not belong'}});    
+        }
     }
     catch(err){
         console.log(err)
@@ -79,6 +85,7 @@ exports.create = async (req, res, next) => {
     const createdOrder = new Order();
     createdOrder.company = company._id
     createdOrder.creator = req.userId
+    createdOrder.employee = employee._id
     createdOrder.car = car._id
     createdOrder.description = req.body.description
     createdOrder.start = req.body.start
@@ -95,6 +102,13 @@ exports.create = async (req, res, next) => {
         console.log(err)
         return res.status(500).json({'status': 'failed', 'data':{'error': err.errors}})
     }
+    
+    let users = await User.find({'company': company._id, 'employee': employee._id}).select('webPushToken');
+    let subscriptions = users.map(user => user.webPushToken)
+    let paylaod = JSON.stringify({ 
+        title: createdOrder.description
+    })
+    scheduleNotification(createdOrder.start, paylaod, subscriptions)
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdOrder._id}})
 }
@@ -108,6 +122,7 @@ exports.show = async (req, res, next) => {
     const order = await Order.findOne({'_id': id, 'company': company._id})
         .populate('car', 'name')
         .populate('creator', 'name')
+        .populate('employee', 'name')
         .select('_id description start end address contact');
 
     if(!order){

@@ -40,6 +40,10 @@ const schema = new Schema({
         long: {
             type: String,
         },
+        employee: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
     },
     {timestamps: true}
 );
