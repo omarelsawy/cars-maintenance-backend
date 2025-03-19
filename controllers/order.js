@@ -56,7 +56,7 @@ exports.all = async (req, res, next) => {
         .populate('creator', 'name')
         .limit(perPage)
         .skip((page-1)*perPage)
-        .select('_id start end address');
+        .select('_id start end address status');
 
     res.status(200).json({'status': 'success', 'data': {'orders': ordersRes, 'count': count}})
 
@@ -100,6 +100,7 @@ exports.create = async (req, res, next) => {
     createdOrder.end = req.body.end
     createdOrder.address = req.body.address
     createdOrder.contact = req.body.contact
+    createdOrder.status = 'pending'
     createdOrder.lat = req.body.lat
     createdOrder.long = req.body.long
 
@@ -131,7 +132,7 @@ exports.show = async (req, res, next) => {
         .populate('car', 'name')
         .populate('creator', 'name')
         .populate('employee', 'name')
-        .select('_id description start end address contact');
+        .select('_id description start end address contact status');
 
     if(!order){
         return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    

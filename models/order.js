@@ -33,6 +33,9 @@ const schema = new Schema({
         contact: {
             type: String,
         },
+        status: {
+            type: String,
+        },
         lat: {
             type: String,
         },
