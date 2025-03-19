@@ -13,7 +13,11 @@ const schema = new Schema({
         },
         active: {
             type: Boolean
-        }
+        },
+        service: {
+            type: Schema.Types.ObjectId,
+            ref: 'Service',
+        },
     },
     {timestamps: true} 
 );

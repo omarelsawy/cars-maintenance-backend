@@ -65,17 +65,25 @@ exports.all = async (req, res, next) => {
 exports.create = async (req, res, next) => {
 
     const company = req.company
-    let car;
+    let car
+    let employee
 
     try{
-        car = await Car.findOne({'_id': req.body.carId}).populate('company', '_id')
-        if(car?.company._id.toString() !== company._id.toString()){
-            return res.status(422).json({'status': 'failed', 'data': {'error': 'car not belong'}});    
+
+        if(req.body.carId){
+            car = await Car.findOne({'_id': req.body.carId}).populate('company', '_id')
+            if(car?.company._id.toString() !== company._id.toString()){
+                return res.status(422).json({'status': 'failed', 'data': {'error': 'car not belong'}});    
+            }
         }
-        employee = await User.findOne({'_id': req.body.employeeId}).populate('company', '_id')
-        if(employee?.company._id.toString() !== company._id.toString()){
-            return res.status(422).json({'status': 'failed', 'data': {'error': 'employee not belong'}});    
+        
+        if(req.body.employeeId){
+            employee = await User.findOne({'_id': req.body.employeeId}).populate('company', '_id')
+            if(employee?.company._id.toString() !== company._id.toString()){
+                return res.status(422).json({'status': 'failed', 'data': {'error': 'employee not belong'}});    
+            }
         }
+
     }
     catch(err){
         console.log(err)
@@ -85,8 +93,8 @@ exports.create = async (req, res, next) => {
     const createdOrder = new Order();
     createdOrder.company = company._id
     createdOrder.creator = req.userId
-    createdOrder.employee = employee._id
-    createdOrder.car = car._id
+    createdOrder.employee = employee?._id
+    createdOrder.car = car?._id
     createdOrder.description = req.body.description
     createdOrder.start = req.body.start
     createdOrder.end = req.body.end
@@ -103,7 +111,7 @@ exports.create = async (req, res, next) => {
         return res.status(500).json({'status': 'failed', 'data':{'error': err.errors}})
     }
     
-    let users = await User.find({'company': company._id, '_id': employee._id}).select('webPushToken');
+    let users = await User.find({'company': company._id, '_id': employee?._id}).select('webPushToken');
     let subscriptions = users.map(user => user.webPushToken)
     let paylaod = JSON.stringify({ 
         title: createdOrder.description

@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const Company = require('../models/company');
+const Service = require('../models/service');
 
 exports.getToken = async (req, res, next) => {
 
@@ -16,7 +16,15 @@ exports.getToken = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let user = await User.findOne({'email': email}).populate('company', 'name slug')
+    let user = await User.findOne({'email': email})
+        .populate({
+            path: 'company',
+            select: "name slug",
+            populate: {
+                path: 'service',
+                select: "name",
+            }
+        })
 
     if(!user){
         const error = new Error('user not found')
@@ -41,6 +49,10 @@ exports.getToken = async (req, res, next) => {
         await user.save()
     }
 
-    res.json({'status': 'success', 'data': {'token': token, 'type': user.type, 'company': user.company}})
+    res.json({'status': 'success', 'data': {
+        'token': token,
+        'type': user.type, 
+        'company': user.company,
+    }})
 
 }

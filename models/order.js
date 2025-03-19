@@ -10,7 +10,6 @@ const schema = new Schema({
         car: {
             type: Schema.Types.ObjectId,
             ref: 'Car',
-            required: true
         },
         company: {
             type: Schema.Types.ObjectId,
