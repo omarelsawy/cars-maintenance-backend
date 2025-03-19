@@ -24,6 +24,9 @@ const schema = new Schema({
         ref: 'Company',
         required: true
     },
+    phone: {
+        type: String,
+    },
     webPushToken: {
         type: Object,
     },

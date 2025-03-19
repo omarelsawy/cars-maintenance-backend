@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Order = require("../models/order");
+const bcrypt = require('bcryptjs');
 
 exports.all = async (req, res, next) => {
     
@@ -10,7 +11,7 @@ exports.all = async (req, res, next) => {
     const count = await User.find(filter).count()
 
     const employeesRes = await User.find(filter).sort({createdAt: -1})
-        .select('_id name');
+        .select('_id name phone');
 
     res.status(200).json({'status': 'success', 'data': {'employees': employeesRes, 'count': count}})
 
@@ -45,5 +46,34 @@ exports.orders = async (req, res, next) => {
         .select('_id start end address');
 
     res.status(200).json({'status': 'success', 'data': {'orders': ordersRes, 'count': count}})
+
+}
+
+exports.create = async (req, res, next) => {
+
+    const company = req.company;
+
+    const email = await User.findOne({'company': company._id, 'email': req.body.email})
+    if(email){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'email exist'}});    
+    }
+
+    const createdEmp = new User();
+    createdEmp.name = req.body.name
+    createdEmp.phone = req.body.phone
+    createdEmp.email = req.body.email
+    createdEmp.password = await bcrypt.hash(req.body.password, 10)
+    createdEmp.type = 'employee'
+    createdEmp.company = company._id
+
+    try{
+        await createdEmp.save();
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({'status': 'failed', 'messages': err.errors})
+    }
+
+    res.status(201).json({'status': 'success', 'data': {'_id': createdEmp._id}})
 
 }
