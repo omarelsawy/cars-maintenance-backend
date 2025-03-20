@@ -43,7 +43,7 @@ exports.orders = async (req, res, next) => {
         .populate('creator', 'name')
         .limit(perPage)
         .skip((page-1)*perPage)
-        .select('_id start end address');
+        .select('_id start end address status');
 
     res.status(200).json({'status': 'success', 'data': {'orders': ordersRes, 'count': count}})
 
@@ -75,5 +75,33 @@ exports.create = async (req, res, next) => {
     }
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdEmp._id}})
+
+}
+
+exports.orderStatus = async (req, res, next) => {
+
+    const company = req.company;
+
+    const order = await Order.findOne({'_id': req.body.orderId, 'company': company._id})
+
+    if(!order){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'not found'}});    
+    }
+
+    if(req.body.status !== 'done' && req.body.status !== 'inprogress'){
+        return res.status(422).json({'status': 'failed', 'data': {'error': 'invalid status'}});    
+    }
+
+    order.status = req.body.status
+
+    try{
+        await order.save();
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({'status': 'failed', 'messages': err.errors})
+    }
+
+    res.status(200).json({'status': 'success'})
 
 }
