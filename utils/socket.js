@@ -1,7 +1,7 @@
 const io = require("socket.io")(
     3001 , {
       cors: {
-          origin: "*"
+          origin: ['http://localhost:3000', 'https://delicate-stroopwafel-954035.netlify.app']
       }
   }
   );
