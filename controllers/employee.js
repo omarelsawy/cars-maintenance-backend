@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Order = require("../models/order");
 const bcrypt = require('bcryptjs');
+const io = require("../utils/socket")
 
 exports.all = async (req, res, next) => {
     
@@ -101,6 +102,8 @@ exports.orderStatus = async (req, res, next) => {
         console.log(err)
         return res.status(500).json({'status': 'failed', 'messages': err.errors})
     }
+
+    io.emit('update_order', {'status': order.status, 'id': order._id})
 
     res.status(200).json({'status': 'success'})
 

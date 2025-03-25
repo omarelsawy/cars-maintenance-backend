@@ -12,6 +12,8 @@ const isAuth = require ('./middleware/is-auth');
 const validateCompany = require('./middleware/validateCompany');
 const webPush = require('web-push')
 
+const io = require("./utils/socket")
+
 webPush.setVapidDetails(
     "https://example.com",
     process.env.VAPID_PUBLIC_KEY,
