@@ -2,6 +2,7 @@ const Order = require("../models/order")
 const Car = require("../models/car");
 const User = require("../models/user");
 const { scheduleNotification } = require("../services");
+const { getIO } = require('../utils/socket');
 
 exports.all = async (req, res, next) => {
     
@@ -118,6 +119,9 @@ exports.create = async (req, res, next) => {
         title: createdOrder.description
     })
     scheduleNotification(createdOrder.start, paylaod, subscriptions)
+
+    const io = getIO();
+    io.emit('create_order', {'order': createdOrder})
 
     res.status(201).json({'status': 'success', 'data': {'_id': createdOrder._id}})
 }

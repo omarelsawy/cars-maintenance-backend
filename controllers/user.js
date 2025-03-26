@@ -51,7 +51,8 @@ exports.getToken = async (req, res, next) => {
 
     res.json({'status': 'success', 'data': {
         'token': token,
-        'type': user.type, 
+        'type': user.type,
+        'userId': user._id,
         'company': user.company,
     }})
 
