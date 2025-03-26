@@ -11,16 +11,16 @@ const { body } = require('express-validator/check');
 const isAuth = require ('./middleware/is-auth');
 const validateCompany = require('./middleware/validateCompany');
 const webPush = require('web-push')
+const socketIO = require('./utils/socket');
 
-const io = require("./utils/socket")
+const app = express();
+
 
 webPush.setVapidDetails(
     "https://example.com",
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
 );
-
-const app = express();
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -81,8 +81,9 @@ app.use((err, req, res, next) => {
 //DB
 mongoose.connect(process.env.MONGO_URL_Live)
     .then(result => {
-        console.log('connected');
-        app.listen(process.env.PORT || 3002);
+        console.log('connected')
+        const server = app.listen(process.env.PORT || 3002);
+        socketIO.init(server); // Initialize Socket.IO
     })
     .catch(err => {
         console.log(err);
