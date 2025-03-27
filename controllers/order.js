@@ -67,9 +67,9 @@ exports.all = async (req, res, next) => {
 
         return {
             '_id': order._id,
-            'day': moment(order.start).format('YYYY-MM-DD'),
-            'from': moment(order.start).format('hh:mm A'),
-            'to': moment(order.end).format('hh:mm A'),
+            'day': order.start ? moment(order.start).format('YYYY-MM-DD') : '',
+            'from': order.start ? moment(order.start).format('hh:mm A') : '',
+            'to': order.end ? moment(order.end).format('hh:mm A') : '',
             'address': order.address,
             'status': order.status,
         }
