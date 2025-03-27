@@ -3,6 +3,7 @@ const Car = require("../models/car");
 const User = require("../models/user");
 const { scheduleNotification } = require("../services");
 const { getIO } = require('../utils/socket');
+const moment = require('moment');
 
 exports.all = async (req, res, next) => {
     
@@ -55,12 +56,26 @@ exports.all = async (req, res, next) => {
 
     const count = await Order.find(filter).count()
 
-    const ordersRes = await Order.find(filter).sort({createdAt: -1})
+    const orders = await Order.find(filter).sort({createdAt: -1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)
         .skip((page-1)*perPage)
         .select('_id start end address status');
+    
+    let ordersResPromise = orders.map(async (order) => {
+
+        return {
+            '_id': order._id,
+            'day': moment(order.start).format('YYYY-MM-DD'),
+            'from': moment(order.start).format('hh:mm A'),
+            'to': moment(order.end).format('hh:mm A'),
+            'address': order.address,
+            'status': order.status,
+        }
+    })
+
+    const ordersRes = await Promise.all(ordersResPromise)    
 
     res.status(200).json({'status': 'success', 'data': {'orders': ordersRes, 'count': count}})
 
