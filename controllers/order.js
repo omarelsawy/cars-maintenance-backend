@@ -56,7 +56,7 @@ exports.all = async (req, res, next) => {
 
     const count = await Order.find(filter).count()
 
-    const orders = await Order.find(filter).sort({createdAt: -1})
+    const orders = await Order.find(filter).sort({start: 1})
         .populate('car', 'name')
         .populate('creator', 'name')
         .limit(perPage)
