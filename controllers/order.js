@@ -16,6 +16,9 @@ exports.all = async (req, res, next) => {
     if(req.query.carId){
         filter.car = req.query.carId
     }
+    if(req.query.employeeId){
+        filter.employee = req.query.employeeId
+    }
 
     if(req.query.start){
         filter.$and = [

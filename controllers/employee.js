@@ -8,11 +8,21 @@ exports.all = async (req, res, next) => {
     const company = req.company;
 
     const filter = {'company': company._id, 'type': 'employee'};
+    const perPage = req.query.perPage ? req.query.perPage : 10
+    const page = req.query.page ? req.query.page : 1
 
     const count = await User.find(filter).count()
 
-    const employeesRes = await User.find(filter).sort({createdAt: -1})
-        .select('_id name phone');
+    let query = User.find(filter)
+        .sort({createdAt: -1})
+        .select('_id name phone email');
+
+    if (req.query.paginate !== 'false') {
+        query = query.limit(perPage)
+            .skip((page-1)*perPage);
+    }
+
+    let employeesRes = await query;
 
     res.status(200).json({'status': 'success', 'data': {'employees': employeesRes, 'count': count}})
 
