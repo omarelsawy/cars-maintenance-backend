@@ -43,9 +43,20 @@ exports.orders = async (req, res, next) => {
     const startOfTomorrow = new Date(startOfToday);
     startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
 
-    filter.start = {
-        $gte: startOfToday,
-        $lt: startOfTomorrow,
+    const startOfAfterTomorrow = new Date(startOfTomorrow);
+    startOfAfterTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    if(req.query.tommorow === 'true'){
+        filter.start = {
+            $gte: startOfTomorrow,
+            $lt: startOfAfterTomorrow,
+        }
+    }
+    else{
+        filter.start = {
+            $gte: startOfToday,
+            $lt: startOfTomorrow,
+        }
     }
 
     const count = await Order.find(filter).count()
