@@ -34,11 +34,17 @@ exports.all = async (req, res, next) => {
 
     let carsCount = await Car.find({'company': company._id}).count();
 
-    let cars = await Car.find({'company': company._id})
-        .limit(perPage)
-        .skip((page-1)*perPage)
+    let query = Car.find({'company': company._id})
         .sort({createdAt: -1})
         .select('_id name');
+
+    // Only apply pagination if shouldPaginate is true
+    if (req.query.paginate !== 'false') {
+        query = query.limit(perPage)
+            .skip((page-1)*perPage);
+    }
+
+    let cars = await query;
 
     let carsResPromise = cars.map(async (car) => {
 
